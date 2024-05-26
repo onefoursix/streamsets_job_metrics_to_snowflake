@@ -103,5 +103,5 @@ Note the pipeline calls the SDK script in a Start Event:
 
 <img src="images/start-event.png" alt="start-event" width="900"/>
 
-In order to avoid hard-coding API credentials into the SDK script, the credentials are read from the environment. In the screenshot above, you can see I have loaded the values from the files <code>CRED_ID</code> and <code>CRED_TOKEN</code> loaded from my [resources](https://docs.streamsets.com/portal/platform-datacollector/latest/datacollector/UserGuide/Pipeline_Configuration/RuntimeValues.html#concept_bs4_5nm_2s) directory
+In order to avoid hard-coding API credentials into the SDK script, the credentials are read from the environment. In the screenshot above, you can see I have loaded the values from the files <code>CRED_ID</code> and <code>CRED_TOKEN</code> loaded as  [Runtime Resources](https://docs.streamsets.com/portal/platform-datacollector/latest/datacollector/UserGuide/Pipeline_Configuration/RuntimeValues.html#concept_bs4_5nm_2s) directory
 
