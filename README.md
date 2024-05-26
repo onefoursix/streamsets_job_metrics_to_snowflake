@@ -82,3 +82,13 @@ The pipeline looks like this:
 
 <img src="images/pipeline.png" alt="pipeline" width="600"/>
 
+Set the following pipeline parameters:
+
+- <code>STREAMSETS_SDK_SCRIPT</code> - the path to the SDK script
+- <code>LOOKBACK_MINUTES</code> - the number of previous minutes to get Job run metrics for
+- <code>JOB_METRICS_FILE</code> - An absolute path to the job metrics file the SDK script will write
+- 
+
+
+<img src="images/parameters.png" alt="parameters" width="600"/>
+
