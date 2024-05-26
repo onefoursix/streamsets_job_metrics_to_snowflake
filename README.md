@@ -162,7 +162,7 @@ order by STARTTIME DESC
 <img src="images/data3.png" alt="data3" width="700"/>
 
 
-Or course. many more queries, analytics, dashboards, and anomali detection routines can be applied to this data.
+Or course, many more queries, analytics, dashboards, and anomaly detection routines can be applied to this data.
 
 
 ### Todo
