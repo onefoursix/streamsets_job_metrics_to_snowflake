@@ -12,7 +12,7 @@ There are several ways one could implement this functionality:
 
 - A [StreamSets SDK for Python](https://docs.streamsets.com/platform-sdk/latest/welcome/overview.html) script could perform the same actions. The advantages of this approach include an elegant and convenient syntax for getting Job history and metrics, but would require custom code to merge the data into Snowflake, and has no built in scheduling, monitoring and failover.
 
-- A hybrid approach! This example uses a StreamSets SDK script within a pipeline to get the best of both worlds: an elegant retrieval of Job history and metrics, and all of the operational benefits of using a StreamSets pipeline including scheduling, monitoring and failover. 
+- A hybrid approach! This example uses a StreamSets SDK script within a pipeline to get the best of both worlds: an elegant retrieval of Job history and metrics using the SDK, and all of the operational benefits of using a StreamSets pipeline including scheduling, monitoring and failover. 
 
 The example pipeline allows the user to set a <code>lookback</code> period that determines how far back in time to get Job history and metrics for, for example 5 minutes, 1 hour, 24 hours, 30 days, etc...  
 
