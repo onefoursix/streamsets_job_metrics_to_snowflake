@@ -127,13 +127,13 @@ The pipeline created the following Snowflake table:
 
 Here are some sample queries that can be run in Snowflake:
 
-### Find all the Jobs started after a particular datetime:
+### Find all the Jobs started after a particular point in time:
 
 ```
-	select  name, status, starttime, finishtime, inputrecords, outputrecords, errormessage 
-	from streamsets_job_metrics 
-	where STARTTIME > '2024-05-24 15:08:18.394'
-	order by STARTTIME DESC
+select  name, status, starttime, finishtime, inputrecords, outputrecords, errormessage 
+from streamsets_job_metrics 
+where STARTTIME > '2024-05-24 15:08:18.394'
+order by STARTTIME DESC
 ```
 
 <img src="images/data1.png" alt="data1" width="700"/>
@@ -145,10 +145,10 @@ Here are some sample queries that can be run in Snowflake:
 ### Compare all the historical runs of a particular Job:
 
 ```
-	select name, runcount, starttime, inputrecords, outputrecords, errormessage, 
-	from streamsets_job_metrics 
-	where name = 'Oracle to Snowflake Bulk Load' 
-	order by runcount DESC
+select name, runcount, starttime, inputrecords, outputrecords, errormessage, 
+from streamsets_job_metrics 
+where name = 'Oracle to Snowflake Bulk Load' 
+order by runcount DESC
 ```
 
 Note the Job's error message captured in run #8:
