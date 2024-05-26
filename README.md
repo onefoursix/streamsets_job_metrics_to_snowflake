@@ -126,7 +126,7 @@ The pipeline created the following Snowflake table:
 
 Here are some sample queries that can be run in Snowflake:
 
-### Find all the Jobs started after a particular point in time:
+### Find all Jobs started after a particular point in time
 
 ```
 select  name, status, starttime, finishtime, inputrecords, outputrecords, errormessage 
@@ -138,7 +138,7 @@ order by STARTTIME DESC
 <img src="images/data1.png" alt="data1" width="700"/>
 
 
-### Compare all the historical runs of a particular Job:
+### Compare all historical runs of a given Job
 
 ```
 select name, runcount, starttime, inputrecords, outputrecords, errormessage, 
@@ -151,7 +151,7 @@ Note the Job's error message captured in run #9:
 
 <img src="images/data2.png" alt="data2" width="700"/>
 
-### Find all the Active Jobs:
+### Find all Active Jobs:
 
 ```
 select  name, status, starttime, inputrecords, outputrecords, errormessage 
@@ -161,3 +161,11 @@ order by STARTTIME DESC
 ```
 
 <img src="images/data3.png" alt="data3" width="700"/>
+
+
+Or course. many more queries, analytics, dashboards, and anomali detection routines can be applied to this data.
+
+
+### Todo
+
+I will try to add Oracle CDC Lag Time metrics to this project shortly...
