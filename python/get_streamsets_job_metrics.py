@@ -116,7 +116,7 @@ print('-------------------------------------')
 # Job runs to get metrics for
 job_runs = []
 
-# Get Job runs that were started after the lookback time
+# Get metrics for a specific Job run
 def get_run_metrics(job_name, run_count, the_metrics):
     for m in the_metrics:
         if m.run_count == job_run.run_count:
@@ -124,9 +124,10 @@ def get_run_metrics(job_name, run_count, the_metrics):
     print('Error finding metrics for run #{} for Job {}'.format(run_count, job_name))
     return None
 
-
+# Loop through all Jobs
 for job in sch.jobs:
-    # No need to look at Job Templates
+
+    # Ignore Job Templates
     if not job.job_template:
 
         # Get the Job History
@@ -137,7 +138,7 @@ for job in sch.jobs:
 
         done = False
 
-        # Loop through every Job Run, starting with the most recent
+        # Loop through every Job Run for the Job, starting with the most recent
         for job_run in history:
 
             # If this Job Run was started or ended within the lookback period or is still ACTIVE
@@ -145,7 +146,7 @@ for job in sch.jobs:
                     or job_run.finish_time >= start_time_millis
                     or job_run.status == 'ACTIVE'):
 
-                # Get the Job run's metrics
+                # Get the Job Run's metrics
                 run = {}
                 run['ID'] = job.job_id
                 run['NAME'] = job.job_name
