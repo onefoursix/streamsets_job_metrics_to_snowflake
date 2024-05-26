@@ -90,6 +90,12 @@ Set the following pipeline parameters:
 
 For example, I'll use these parameters in my environment:
 
-
 <img src="images/parameters.png" alt="parameters" width="600"/>
+
+Set a Snowflake Connection in the Snowflake Destination as well as all required Snowflake properties (warehouse, database, schema, table name, etc...).  I'll use the table name <code>STREAMSETS_JOB_METRICS</code>
+
+The Snowflake Destination has <code>Table Auto Create</code> and <code>Data Drift Enabled</code> enabled, and has a composite primary-key set for the target table on the ID and RUNCOUNT columns, like this:
+
+<img src="images/pk.png" alt="pk" width="600"/>
+
 
