@@ -90,7 +90,7 @@ Set the following pipeline parameters:
 
 For example, I'll use these parameters in my environment:
 
-<img src="images/parameters.png" alt="parameters" width="600"/>
+<img src="images/parameters.png" alt="parameters" width="700"/>
 
 Set a Snowflake Connection in the Snowflake Destination as well as all required Snowflake properties (warehouse, database, schema, table name, etc...).  I'll use the table name <code>STREAMSETS_JOB_METRICS</code>
 
