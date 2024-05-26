@@ -95,7 +95,7 @@ For example, I'll use these parameters in my environment:
 
 Set a Snowflake Connection in the Snowflake Destination as well as all required Snowflake properties (warehouse, database, schema, table name, etc...).  I'll use the table name <code>STREAMSETS_JOB_METRICS</code>
 
-The Snowflake Destination has <code>Table Auto Create</code> and <code>Data Drift Enabled</code> enabled, and has a composite primary-key set for the target table on the ID and RUNCOUNT columns, like this:
+The Snowflake Destination has <code>Table Auto Create</code> and <code>Data Drift Enabled</code> enabled, and has a composite primary-key set for the target table on the ID and RUNCOUNT columns to support CDC(merge) like this:
 
 <img src="images/pk.png" alt="pk" width="600"/>
 
@@ -106,7 +106,11 @@ Note the pipeline calls the SDK script in a Start Event:
 
 In order to avoid hard-coding API credentials into the SDK script, the credentials are read from the environment. In the screenshot above, you can see I have loaded the values from the files <code>CRED_ID</code> and <code>CRED_TOKEN</code> loaded as [Runtime Resources](https://docs.streamsets.com/portal/platform-datacollector/latest/datacollector/UserGuide/Pipeline_Configuration/RuntimeValues.html#concept_bs4_5nm_2s). 
 
-*Important note: Make sure to set the Shell Executor's Environment Timeout(ms) property (see the screenshot above) to a time long enough to let the script complete. For example, if you are getting the history of thousands of Jobs you might need to increase this value.  You can run teh SDK script in standalone mode as described above to observe how long the script takes to run in your environment.*
+*Important note: Make sure to set the Shell Executor's Environment Timeout(ms) property (see the screenshot above) to a value long enough to let the script complete. For example, if you are getting the history of tens of thousands of Jobs you might need to increase the default value.  You can run the SDK script in standalone mode as described above to observe how long the script takes to run in your environment.*
 
 
 ## Run the Pipeline
+
+Run the pipeline and you should see the number of Job run metrics pulled from Control Hub and written to Snowflake:
+
+<img src="images/start-event.png" alt="start-event" width="900"/>
