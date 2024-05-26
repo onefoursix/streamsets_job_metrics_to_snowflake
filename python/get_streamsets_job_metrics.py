@@ -8,7 +8,6 @@ retrieved metrics into a Snowflake table.  See the README.md for details.
 
 Prerequisites
 -------------
-
 - Python 3.6+ (tested with Python 3.11.5)
 
 - StreamSets API Credentials set in the environment prior to running the script.
@@ -113,9 +112,9 @@ except Exception as e:
     sys.exit(1)
 print('Connected to Control Hub')
 print('-------------------------------------')
+
 # Job runs to get metrics for
 job_runs = []
-
 
 # Get Job runs that were started after the lookback time
 def get_run_metrics(job_name, run_count, the_metrics):
