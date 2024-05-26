@@ -102,7 +102,7 @@ Note the pipeline calls the SDK script in a Start Event:
 
 <img src="images/start-event.png" alt="start-event" width="900"/>
 
-In order to avoid hard-coding API credentials into the SDK script, the credentials are read from the environment. In the screenshot above, you can see I have loaded the values from the files <code>CRED_ID</code> and <code>CRED_TOKEN</code> loaded as [Runtime Resources](https://docs.streamsets.com/portal/platform-datacollector/latest/datacollector/UserGuide/Pipeline_Configuration/RuntimeValues.html#concept_bs4_5nm_2s). 
+In order to avoid hard-coding API credentials into the SDK script or the pipeline, the credentials are read from the environment. In the screenshot above, you can see I have loaded the values from the files <code>CRED_ID</code> and <code>CRED_TOKEN</code> loaded as [Runtime Resources](https://docs.streamsets.com/portal/platform-datacollector/latest/datacollector/UserGuide/Pipeline_Configuration/RuntimeValues.html#concept_bs4_5nm_2s). 
 
 *Important note: Make sure to set the Shell Executor's Environment Timeout(ms) property (see the screenshot above) to a value long enough to let the script complete. For example, if you are getting the history of tens of thousands of Jobs you might need to increase the default value.  You can run the SDK script in standalone mode as described above to observe how long the script takes to run in your environment.*
 
