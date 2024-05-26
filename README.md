@@ -30,7 +30,7 @@ A Job could be created for this pipeline, and that Job could be scheduled to run
 
 ## Deploying the Example
 
-### Test the SDK Script
+### Deploy and Test the SDK Script
 - Copy the file [get_streamsets_job_metrics.py](python/get_streamsets_job_metrics.py) to a location on the Data Collector machine. I'll copy mine to  <code>/home/mark/scripts/get_streamsets_job_metrics.py</code>
 
 - Export your StreamSets Platform API Credentials:
