@@ -46,9 +46,6 @@ import json
 cred_id = os.getenv('CRED_ID')
 cred_token = os.getenv('CRED_TOKEN')
 
-# The file we'll write metrics to
-output_file = None
-
 
 def print_usage_and_exit():
     print('Usage: $ python3 get_streamsets_job_metrics.py <job_metrics_file> <lookback_minutes>')
@@ -60,15 +57,6 @@ def print_usage_and_exit():
 if len(sys.argv) != 3:
     print('Error: Wrong number of arguments')
     print_usage_and_exit()
-
-# Validate the job_metrics_file command line arg
-job_metrics_file = sys.argv[1]
-try:
-    output_file = open(job_metrics_file, "w", encoding='utf-8')
-except Exception as e:
-    print("Error: Could not create file: {}".format(job_metrics_file))
-    print(str(e))
-    sys.exit(-1)
 
 # Validate the lookback_minutes command line arg
 lookback_minutes = sys.argv[2]
@@ -83,109 +71,110 @@ def convert_timestamp_seconds_to_datetime_string(timestamp_seconds):
     return datetime.fromtimestamp(timestamp_seconds).strftime("%Y-%m-%d %H:%M:%S")
 
 
-# Current time
-current_time_seconds = time()
+# Open the job_metrics_file
+job_metrics_file = sys.argv[1]
+with open(job_metrics_file, "w", encoding='utf-8') as output_file:
+    # Get the current time
+    current_time_seconds = time()
 
-# Starting time to look for Jobs
-start_time_seconds = int(current_time_seconds - (lookback_minutes * 60))
-start_time_millis = start_time_seconds * 1000
+    # Starting time to look for Jobs
+    start_time_seconds = int(current_time_seconds - (lookback_minutes * 60))
+    start_time_millis = start_time_seconds * 1000
 
-# Print the settings
-print('-------------------------------------')
-print('Current time is {}'
-      .format(convert_timestamp_seconds_to_datetime_string(current_time_seconds)))
-print('Lookback minutes is {}'.format(lookback_minutes))
-print('Will get metrics for Jobs started after {}'
-      .format(convert_timestamp_seconds_to_datetime_string(start_time_seconds)))
-print('Metrics will be written to the file {}'.format(job_metrics_file))
-print('-------------------------------------')
+    # Print the settings
+    print('-------------------------------------')
+    print('Current time is {}'
+          .format(convert_timestamp_seconds_to_datetime_string(current_time_seconds)))
+    print('Lookback minutes is {}'.format(lookback_minutes))
+    print('Will get metrics for Jobs started after {}'
+          .format(convert_timestamp_seconds_to_datetime_string(start_time_seconds)))
+    print('Metrics will be written to the file {}'.format(job_metrics_file))
+    print('-------------------------------------')
 
-# Connect to Control Hub
-sch = None
-try:
-    sch = ControlHub(
-        credential_id=cred_id,
-        token=cred_token)
-except Exception as e:
-    print('Error connecting to Control Hub')
-    print(str(e))
-    sys.exit(1)
-print('Connected to Control Hub')
-print('-------------------------------------')
+    # Connect to Control Hub
+    sch = None
+    try:
+        sch = ControlHub(
+            credential_id=cred_id,
+            token=cred_token)
+    except Exception as e:
+        print('Error connecting to Control Hub')
+        print(str(e))
+        sys.exit(1)
+    print('Connected to Control Hub')
+    print('-------------------------------------')
 
-# Job runs to get metrics for
-job_runs = []
+    # Job runs to get metrics for
+    job_runs = []
 
-# Get metrics for a specific Job run
-def get_run_metrics(job_name, run_count, the_metrics):
-    for m in the_metrics:
-        if m.run_count == job_run.run_count:
-            return m
-    print('Error finding metrics for run #{} for Job {}'.format(run_count, job_name))
-    return None
+    # Get metrics for a specific Job run
+    def get_run_metrics(job_name, run_count, the_metrics):
+        for m in the_metrics:
+            if m.run_count == job_run.run_count:
+                return m
+        print('Error finding metrics for run #{} for Job {}'.format(run_count, job_name))
+        return None
 
-# Loop through all Jobs
-for job in sch.jobs:
 
-    # Ignore Job Templates
-    if not job.job_template:
+    # Loop through all Jobs
+    for job in sch.jobs:
 
-        # Get the Job History
-        history = job.history
+        # Ignore Job Templates
+        if not job.job_template:
 
-        # Get the Job Metrics
-        metrics = job.metrics
+            # Get the Job History
+            history = job.history
 
-        done = False
+            # Get the Job Metrics
+            metrics = job.metrics
 
-        # Loop through every Job Run for the Job, starting with the most recent
-        for job_run in history:
+            done = False
 
-            # If this Job Run was started or ended within the lookback period or is still ACTIVE
-            if (job_run.start_time >= start_time_millis
-                    or job_run.finish_time >= start_time_millis
-                    or job_run.status == 'ACTIVE'):
+            # Loop through every Job Run for the Job, starting with the most recent
+            for job_run in history:
 
-                # Get the Job Run's metrics
-                run = {}
-                run['ID'] = job.job_id
-                run['NAME'] = job.job_name
-                run['CREATETIME'] = job.created_on
-                run['LASTMODIFIEDON'] = job.last_modified_on
-                run['PIPELINENAME'] = job.pipeline_name
-                run['PIPELINECOMMITLABEL'] = job.commit_label
-                run['RUNCOUNT'] = job_run.run_count
-                run['STARTTIME'] = job_run.start_time
-                run['FINISHTIME'] = job_run.finish_time
-                run['ERRORMESSAGE'] = job_run.error_message
-                run['COLOR'] = job_run.color
-                run['STATUS'] = job_run.status
-                run_metrics = get_run_metrics(job.job_name, job_run.run_count, metrics)
+                # If this Job Run was started or ended within the lookback period or is still ACTIVE
+                if (job_run.start_time >= start_time_millis
+                        or job_run.finish_time >= start_time_millis
+                        or job_run.status == 'ACTIVE'):
 
-                # If no metrics exists, set all row counts to -1 as a flag
-                if run_metrics is not None:
-                    run['INPUTRECORDS'] = run_metrics.input_count
-                    run['OUTPUTRECORDS'] = run_metrics.output_count
-                    run['ERRORRECORDS'] = run_metrics.error_count
+                    # Get the Job Run's metrics
+                    run = {}
+                    run['ID'] = job.job_id
+                    run['NAME'] = job.job_name
+                    run['CREATETIME'] = job.created_on
+                    run['LASTMODIFIEDON'] = job.last_modified_on
+                    run['PIPELINENAME'] = job.pipeline_name
+                    run['PIPELINECOMMITLABEL'] = job.commit_label
+                    run['RUNCOUNT'] = job_run.run_count
+                    run['STARTTIME'] = job_run.start_time
+                    run['FINISHTIME'] = job_run.finish_time
+                    run['ERRORMESSAGE'] = job_run.error_message
+                    run['COLOR'] = job_run.color
+                    run['STATUS'] = job_run.status
+                    run_metrics = get_run_metrics(job.job_name, job_run.run_count, metrics)
+
+                    # If no metrics exists, set all row counts to -1 as a flag
+                    if run_metrics is not None:
+                        run['INPUTRECORDS'] = run_metrics.input_count
+                        run['OUTPUTRECORDS'] = run_metrics.output_count
+                        run['ERRORRECORDS'] = run_metrics.error_count
+                    else:
+                        run['INPUTRECORDS'] = -1
+                        run['OUTPUTRECORDS'] = -1
+                        run['ERRORRECORDS'] = -1
+
+                    job_runs.append(run)
                 else:
-                    run['INPUTRECORDS'] = -1
-                    run['OUTPUTRECORDS'] = -1
-                    run['ERRORRECORDS'] = -1
+                    # We're finished with this Job
+                    break
 
-                job_runs.append(run)
-            else:
-                # We're finished with this Job
-                break
+    print('Found {} Job Runs within lookback window'.format(len(job_runs)))
 
-print('Found {} Job Runs within lookback window'.format(len(job_runs)))
-
-try:
     if len(job_runs) > 0:
         print('Writing Metrics')
         for run in job_runs:
             output_file.write(json.dumps(run) + '\n')
-finally:
-    output_file.close()
 
-print('-------------------------------------')
-print('Done')
+    print('-------------------------------------')
+    print('Done')
