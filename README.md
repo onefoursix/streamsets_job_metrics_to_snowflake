@@ -73,7 +73,6 @@ $ cat /tmp/streamsets_job_metrics.json
 ...
 ```
 
---> If you have made it this far, the SDK script is working!
 
 ### Import and Configure the pipeline
 Import the pipeline from the archive file [pipelines/Job_History_to_Snowflake.zip](pipelines/Job_History_to_Snowflake.zip)
