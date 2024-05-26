@@ -18,7 +18,7 @@ The example pipeline allows the user to set a <code>lookback</code> period that 
 
 The script is idempotent, so that running it multiple times will not result in duplicate data in Snowflake. For Jobs that are actively running across two or more executions of the script, the Job run's metrics will be updated.
 
-A Job could be created for this pipeline, and that Job could be scheduled to run as often as necessary, for example, to keep a dashboard updated every five minutes.  One could run the Job an initial time with a lookback of 30 days, and then set schedule the Job to run every 5 minutes with a lookback of 5 minutes.
+A Job could be created for this pipeline, and that Job could be scheduled to run as often as necessary, for example, to keep a dashboard updated every five minutes.  One could run the Job an initial time with a lookback of 30 days, and then schedule the Job to run every 5 minutes with a lookback of 5 minutes to keep things up to date.
 
 
 
