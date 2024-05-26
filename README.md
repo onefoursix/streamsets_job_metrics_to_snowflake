@@ -79,5 +79,6 @@ Inspect the metrics file written by the script. It should look like this:
 Import the pipeline from the archive file [pipelines/Job_History_to_Snowflake.zip](pipelines/Job_History_to_Snowflake.zip)
 
 The pipeline looks like this:
-<img src="images/pipeline.png" alt="pipeline" width="700"/>
+
+<img src="images/pipeline.png" alt="pipeline" width="600"/>
 
