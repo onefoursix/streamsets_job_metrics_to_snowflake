@@ -99,3 +99,10 @@ The Snowflake Destination has <code>Table Auto Create</code> and <code>Data Drif
 <img src="images/pk.png" alt="pk" width="600"/>
 
 
+Note the pipeline calls the SDK script in a Start Event:
+
+<img src="images/start-event.png" alt="start-event" width="900"/>
+
+### Store your API Credentials in Resource Files
+In order to avoid hard-coding API credentials into the SDK script, they are read from the environment. 
+
