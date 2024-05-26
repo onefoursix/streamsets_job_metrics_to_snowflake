@@ -179,13 +179,13 @@ for job in sch.jobs:
 
 print('Found {} Job Runs within lookback window'.format(len(job_runs)))
 
-if len(job_runs) > 0:
-    print('Writing Metrics')
-    try:
+try:
+    if len(job_runs) > 0:
+        print('Writing Metrics')
         for run in job_runs:
             output_file.write(json.dumps(run) + '\n')
-    finally:
-        output_file.close()
+finally:
+    output_file.close()
 
 print('-------------------------------------')
 print('Done')
