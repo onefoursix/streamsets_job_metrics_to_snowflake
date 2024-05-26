@@ -35,43 +35,42 @@ A Job could be created for this pipeline, and that Job could be scheduled to run
 
 - Export your StreamSets Platform API Credentials:
 ```
-	$ export CRED_ID="..."
-	$ export CRED_TOKEN="..."
+$ export CRED_ID="..."
+$ export CRED_TOKEN="..."
 ```
 
 - Execute the script passing it the name of a metrics file to be written and the number of lookback minutes:
 
 ```
-	$ python3 get_streamsets_job_metrics.py /tmp/streamsets_job_metrics.json 60
+$ python3 get_streamsets_job_metrics.py /tmp/streamsets_job_metrics.json 60
 ```
 
 You should see output like this:
 
 ```
-	$ python3 get_streamsets_job_metrics.py /tmp/streamsets_job_metrics.json 60
-	-------------------------------------
-	Current time is 2024-05-26 17:49:23
-	Lookback minutes is 60
-	Will get metrics for Jobs started after 2024-05-26 16:49:23
-	Metrics will be written to the file /tmp/streamsets_job_metrics.json
-	-------------------------------------
-	Connected to Control Hub
-	-------------------------------------
-	Found 7 Job Runs within lookback window
-	Writing Metrics
-	-------------------------------------
-	Done
+$ python3 get_streamsets_job_metrics.py /tmp/streamsets_job_metrics.json 60
+-------------------------------------
+Current time is 2024-05-26 17:49:23
+Lookback minutes is 60
+Will get metrics for Jobs started after 2024-05-26 16:49:23
+Metrics will be written to the file /tmp/streamsets_job_metrics.json
+-------------------------------------
+Connected to Control Hub
+-------------------------------------
+Found 7 Job Runs within lookback window
+Writing Metrics
+-------------------------------------
+Done
 ```
 
 Inspect the metrics file written by the script. It should look like this:
 
 ```
-	$ cat /tmp/streamsets_job_metrics.json
-	{"ID": "208e479f-c34c-4379-8529-c03d5c6d3f60:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "NAME": "Get Weather Events", "CREATETIME": 1696984398077, "LASTMODIFIEDON": 1716475664195, "PIPELINENAME": "Get Weather Events", "PIPELINECOMMITLABEL": "v39", "RUNCOUNT": 110, "STARTTIME": 1716745144841, "FINISHTIME": 0, "ERRORMESSAGE": null, "COLOR": "GREEN", "STATUS": "ACTIVE", "INPUTRECORDS": 499, "OUTPUTRECORDS": 499, "ERRORRECORDS": 0}
-	{"ID": "fe9605ab-4912-4181-a315-e49d031a0d50:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "NAME": "Oracle to Snowflake Bulk Load", "CREATETIME": 1716561746294, "LASTMODIFIEDON": 1716562027770, "PIPELINENAME": "Oracle to Snowflake Bulk Load", "PIPELINECOMMITLABEL": "v9", "RUNCOUNT": 12, "STARTTIME": 1716745294569, "FINISHTIME": 1716745325738, "ERRORMESSAGE": null, "COLOR": "GRAY", "STATUS": "INACTIVE", "INPUTRECORDS": 26079, "OUTPUTRECORDS": 26082, "ERRORRECORDS": 0}
-	{"ID": "de4a50a5-7f81-4f55-8dd7-1fc8614c2148:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "NAME": "Weather Raw to Refined", "CREATETIME": 1716330812999, "LASTMODIFIEDON": 1716475898652, "PIPELINENAME": "Weather Raw to Refined", "PIPELINECOMMITLABEL": "v26", "RUNCOUNT": 7, "STARTTIME": 1716745145236, "FINISHTIME": 0, "ERRORMESSAGE": null, "COLOR": "GREEN", "STATUS": "ACTIVE", "INPUTRECORDS": 497, "OUTPUTRECORDS": 497, "ERRORRECORDS": 0}
-	...
-
+$ cat /tmp/streamsets_job_metrics.json
+{"ID": "208e479f-c34c-4379-8529-c03d5c6d3f60:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "NAME": "Get Weather Events", "CREATETIME": 1696984398077, "LASTMODIFIEDON": 1716475664195, "PIPELINENAME": "Get Weather Events", "PIPELINECOMMITLABEL": "v39", "RUNCOUNT": 110, "STARTTIME": 1716745144841, "FINISHTIME": 0, "ERRORMESSAGE": null, "COLOR": "GREEN", "STATUS": "ACTIVE", "INPUTRECORDS": 499, "OUTPUTRECORDS": 499, "ERRORRECORDS": 0}
+{"ID": "fe9605ab-4912-4181-a315-e49d031a0d50:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "NAME": "Oracle to Snowflake Bulk Load", "CREATETIME": 1716561746294, "LASTMODIFIEDON": 1716562027770, "PIPELINENAME": "Oracle to Snowflake Bulk Load", "PIPELINECOMMITLABEL": "v9", "RUNCOUNT": 12, "STARTTIME": 1716745294569, "FINISHTIME": 1716745325738, "ERRORMESSAGE": null, "COLOR": "GRAY", "STATUS": "INACTIVE", "INPUTRECORDS": 26079, "OUTPUTRECORDS": 26082, "ERRORRECORDS": 0}
+{"ID": "de4a50a5-7f81-4f55-8dd7-1fc8614c2148:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "NAME": "Weather Raw to Refined", "CREATETIME": 1716330812999, "LASTMODIFIEDON": 1716475898652, "PIPELINENAME": "Weather Raw to Refined", "PIPELINECOMMITLABEL": "v26", "RUNCOUNT": 7, "STARTTIME": 1716745145236, "FINISHTIME": 0, "ERRORMESSAGE": null, "COLOR": "GREEN", "STATUS": "ACTIVE", "INPUTRECORDS": 497, "OUTPUTRECORDS": 497, "ERRORRECORDS": 0}
+...
 ```
 
 --> If you have made it this far, the SDK script is working!
@@ -137,9 +136,6 @@ order by STARTTIME DESC
 ```
 
 <img src="images/data1.png" alt="data1" width="700"/>
-
-
-
 
 
 ### Compare all the historical runs of a particular Job:
