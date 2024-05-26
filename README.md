@@ -147,9 +147,17 @@ where name = 'Oracle to Snowflake Bulk Load'
 order by runcount DESC
 ```
 
-Note the Job's error message captured in run #8:
+Note the Job's error message captured in run #9:
 
 <img src="images/data2.png" alt="data2" width="700"/>
 
+### Find all the Active Jobs:
 
+```
+select  name, status, starttime, inputrecords, outputrecords, errormessage 
+from streamsets_job_metrics 
+where status = 'ACTIVE'
+order by STARTTIME DESC
+```
 
+<img src="images/data3.png" alt="data3" width="700"/>
