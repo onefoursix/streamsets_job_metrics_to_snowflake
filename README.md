@@ -123,5 +123,5 @@ The shell script's messages are captured in the pipeline's log:
 
 The pipeline created the following Snowflake table:
 
-<img src="images/table.png" alt="table" width="700"/>
+<img src="images/table.png" alt="table" width="500"/>
 
