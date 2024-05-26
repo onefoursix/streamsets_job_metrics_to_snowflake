@@ -118,3 +118,10 @@ Run the pipeline and you should see the number of Job run metrics pulled from Co
 The shell script's messages are captured in the pipeline's log:
 
 <img src="images/logs.png" alt="logs" width="700"/>
+
+## View the data in Snowflake
+
+The pipeline created the following Snowflake table:
+
+<img src="images/table.png" alt="table" width="700"/>
+
