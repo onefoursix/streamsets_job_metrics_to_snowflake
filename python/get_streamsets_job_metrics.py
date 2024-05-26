@@ -53,6 +53,10 @@ def print_usage_and_exit():
     sys.exit(1)
 
 
+def convert_timestamp_seconds_to_datetime_string(timestamp_seconds):
+    return datetime.fromtimestamp(timestamp_seconds).strftime("%Y-%m-%d %H:%M:%S")
+
+
 # Check the number of command line args
 if len(sys.argv) != 3:
     print('Error: Wrong number of arguments')
@@ -66,14 +70,11 @@ except ValueError as ve:
     print('Error: lookback_minutes arg \'{}\' is not an integer'.format(lookback_minutes))
     print_usage_and_exit()
 
-
-def convert_timestamp_seconds_to_datetime_string(timestamp_seconds):
-    return datetime.fromtimestamp(timestamp_seconds).strftime("%Y-%m-%d %H:%M:%S")
-
-
-# Open the job_metrics_file
+# Get the job metrics file name
 job_metrics_file = sys.argv[1]
+
 with open(job_metrics_file, "w", encoding='utf-8') as output_file:
+
     # Get the current time
     current_time_seconds = time()
 
