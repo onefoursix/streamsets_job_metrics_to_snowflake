@@ -114,3 +114,7 @@ In order to avoid hard-coding API credentials into the SDK script, the credentia
 Run the pipeline and you should see the number of Job run metrics pulled from Control Hub and written to Snowflake:
 
 <img src="images/job-run.png" alt="job-run" width="600"/>
+
+The shell script's messages are captured in the pipeline's log:
+
+<img src="images/logs.png" alt="logs" width="700"/>
