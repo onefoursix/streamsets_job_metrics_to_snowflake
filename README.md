@@ -1,4 +1,4 @@
-## StreamSets Hob Metrics to Snowflake
+## StreamSets Job Metrics to Snowflake
 This project provides an example of how to replicate StreamSets Job Metrics to Snowflake.  
 
 This allows operators to easily run SQL queries and build custom dashboards on top of StreamSets Job metrics and history. For example, one could display a list of currently running Jobs with their record counts, or compare historical record counts and performance metrics of the same Job run every day for the past month.
