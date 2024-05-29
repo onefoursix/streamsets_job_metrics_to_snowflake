@@ -187,7 +187,7 @@ select name, status, starttime, inputrecords,
 from streamsets_job_metrics 
 where name = 'Oracle CDC to Snowflake' and status = 'ACTIVE'
 ```
-<img src="images/oracle-cdc-lag-results.png" alt="oracle-cdc-lag-results.png" width="600"/>
+<img src="images/oracle-cdc-lag-results.png" alt="oracle-cdc-lag-results.png" width="900"/>
 
 
 
