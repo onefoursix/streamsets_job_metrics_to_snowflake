@@ -165,6 +165,17 @@ order by STARTTIME DESC
 Or course, many more queries, analytics, dashboards, and anomaly detection routines can be applied to this data.
 
 
-### Todo
+### Capturing Oracle CDC Metrics
 
-I will try to add Oracle CDC Lag Time metrics to this project shortly...
+This project can also capture Oracle CDC Metrics, such as <code>Read lag (seconds)</code> for pipelines that use the original StreamSets [Oracle CDC Client Origin](https://docs.streamsets.com/portal/platform-datacollector/latest/datacollector/UserGuide/Origins/OracleCDC.html#concept_rs5_hjj_tw).  Additional support will be added shortly for pipelines that use the newer StreamSets [Oracle CDC Origin](https://docs.streamsets.com/portal/platform-datacollector/latest/datacollector/UserGuide/Origins/OracleC.html#concept_whr_2w2_bwb).
+
+To enable capture of the the <code>Read lag (seconds)</code> metric, add a Job tag with the value <code>oracle_cdc</code> to your Oracle CDC Job(s).
+
+With that tag in place, the SDK script will capture the SDC Oracle CDC Gauge <code>Read lag (seconds)</code> and, thanks to data-drift support in the StreamSets Snowflake Connector, will add a column named <code>ORACLE_CDC_LAG_TIME_SECONDS</code> to the <code>STREAMSETS_JOB_METRICS</code> table.
+
+You should see additional log messages when Oracle CDC metrics are captured, like this:
+
+<img src="images/cdc-read-lag-log.png.png" alt="cdc-read-lag-log.png" width="700"/>
+
+
+

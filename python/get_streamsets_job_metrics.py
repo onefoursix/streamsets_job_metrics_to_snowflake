@@ -41,10 +41,14 @@ from time import time
 import sys
 from streamsets.sdk import ControlHub
 import json
+from oracle_cdc_metrics_helper import OracleCDCMetricsHelper
 
 # Get Control Hub Credentials from the environment
 cred_id = os.getenv('CRED_ID')
 cred_token = os.getenv('CRED_TOKEN')
+
+# A Job tag that identifies Oracle CDC Jobs
+oracle_cdc_job_tag = 'oracle_cdc'
 
 
 def print_usage_and_exit():
@@ -55,6 +59,22 @@ def print_usage_and_exit():
 
 def convert_timestamp_seconds_to_datetime_string(timestamp_seconds):
     return datetime.fromtimestamp(timestamp_seconds).strftime("%Y-%m-%d %H:%M:%S")
+
+
+# Get metrics for a specific Job run
+def get_run_metrics(job_name, run_count, the_metrics):
+    for m in the_metrics:
+        if m.run_count == job_run.run_count:
+            return m
+    print('Error finding metrics for run #{} for Job {}'.format(run_count, job_name))
+    return None
+
+
+def is_oracle_cdc_job(the_job):
+    for tag in the_job.job_tags:
+        if tag['tag'] == oracle_cdc_job_tag:
+            return True
+    return False
 
 
 # Check the number of command line args
@@ -73,8 +93,7 @@ except ValueError as ve:
 # Get the job metrics file name
 job_metrics_file = sys.argv[1]
 
-with open(job_metrics_file, "w", encoding='utf-8') as output_file:
-
+with (open(job_metrics_file, "w", encoding='utf-8') as output_file):
     # Get the current time
     current_time_seconds = time()
 
@@ -105,17 +124,11 @@ with open(job_metrics_file, "w", encoding='utf-8') as output_file:
     print('Connected to Control Hub')
     print('-------------------------------------')
 
+    # Create an instance of the OracleCDCMetricsHelper
+    cdc_metrics = OracleCDCMetricsHelper(cred_id, cred_token, sch)
+
     # Job runs to get metrics for
     job_runs = []
-
-    # Get metrics for a specific Job run
-    def get_run_metrics(job_name, run_count, the_metrics):
-        for m in the_metrics:
-            if m.run_count == job_run.run_count:
-                return m
-        print('Error finding metrics for run #{} for Job {}'.format(run_count, job_name))
-        return None
-
 
     # Loop through all Jobs
     for job in sch.jobs:
@@ -165,11 +178,16 @@ with open(job_metrics_file, "w", encoding='utf-8') as output_file:
                         run['OUTPUTRECORDS'] = -1
                         run['ERRORRECORDS'] = -1
 
+                    if job_run.status == 'ACTIVE' and is_oracle_cdc_job(job):
+                        print('Getting Read lag (seconds) metric for Oracle CDC Job \'{}\''.format(job.job_name))
+                        run['ORACLE_CDC_LAG_TIME_SECONDS'] = cdc_metrics.get_oracle_cdc_lag_time(job, job_run)
+
                     job_runs.append(run)
                 else:
                     # We're finished with this Job
                     break
 
+    print('-------------------------------------')
     print('Found {} Job Runs within lookback window'.format(len(job_runs)))
 
     if len(job_runs) > 0:
