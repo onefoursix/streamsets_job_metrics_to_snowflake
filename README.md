@@ -189,6 +189,8 @@ where name = 'Oracle CDC to Snowflake' and status = 'ACTIVE'
 ```
 <img src="images/oracle-cdc-lag-results.png" alt="oracle-cdc-lag-results.png" width="900"/>
 
+As Oracle CDC gauges are not yet propagated to Control Hub, this capability requires the Python script to be able to connect directly to the Data Collector.
+
 
 
 
