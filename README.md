@@ -196,7 +196,7 @@ oracle_cdc_server_instant_latency
 from streamsets_job_metrics 
 where status = 'ACTIVE' and name = 'Oracle CDC to Snowflake (new Connector)'
 ```
-<img src="images/server-instant-latency.png" alt="server-instant-latency.png" width="900"/>
+<img src="images/server-instant-latency-2.png" alt="server-instant-latency.png" width="900"/>
 
 As Oracle CDC gauges are not yet propagated to Control Hub, this capability requires the Python script to be able to connect directly to the Data Collector.
 
