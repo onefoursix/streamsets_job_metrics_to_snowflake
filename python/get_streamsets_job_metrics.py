@@ -179,8 +179,13 @@ with (open(job_metrics_file, "w", encoding='utf-8') as output_file):
                         run['ERRORRECORDS'] = -1
 
                     if job_run.status == 'ACTIVE' and is_oracle_cdc_job(job):
-                        print('Getting Read lag (seconds) metric for Oracle CDC Job \'{}\''.format(job.job_name))
-                        run['ORACLE_CDC_LAG_TIME_SECONDS'] = cdc_metrics.get_oracle_cdc_lag_time(job, job_run)
+                        print('Getting CDC latency metric for Oracle CDC Job \'{}\''.format(job.job_name))
+                        oracle_cdc_lag_time_metric_map = cdc_metrics.get_oracle_cdc_lag_time(job, job_run)
+
+                        # Unpack the key/value of the Oracle CDC Metric
+                        if oracle_cdc_lag_time_metric_map is not None:
+                            for key in oracle_cdc_lag_time_metric_map.keys():
+                                run[key] = oracle_cdc_lag_time_metric_map[key]
 
                     job_runs.append(run)
                 else:

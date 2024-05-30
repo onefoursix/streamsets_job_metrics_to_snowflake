@@ -22,6 +22,12 @@ class OracleCDCMetricsHelper:
                 return sdc.engine_url
         return None
 
+    # This method returns either a 1 element map like this:
+    #      {'ORACLE_CDC_LAG_TIME_SECONDS': <num_seconds>}
+    # or a 1 element map like this:
+    #      {'ORACLE_CDC_SERVER_INSTANCE_LATENCY': <a time string like 'n minutes m seconds'>}
+    # depending on if the origin is the old Oracle CDC Client Origin or the new Oracle CDC Origin, respectively.
+    # Returns None if no CDC lag or latency metric is found
     def get_oracle_cdc_lag_time(self, job, job_run):
         # noinspection PyProtectedMember
         sdc_id = job._data['currentJobStatus']['sdcIds'][0]
@@ -39,15 +45,25 @@ class OracleCDCMetricsHelper:
             if result.status_code == 200:
                 cdc_metrics = result.json()
                 for key in cdc_metrics['gauges'].keys():
+
+                    # Old Oracle CDC Client Origin
                     if 'RedoLog Archives' in key:
                         cdc_lag_seconds = cdc_metrics['gauges'][key]['value']['Read lag (seconds)']
                         print(' - Oracle CDC Read lag (seconds) = {}'.format(cdc_lag_seconds))
-                        return cdc_lag_seconds
+                        return { 'ORACLE_CDC_LAG_TIME_SECONDS': int(cdc_lag_seconds) }
+
+                    # New Oracle CDC Origin
+                    elif 'Summary 02 - Latency.0.gauge' in key:
+                        cdc_lag_seconds = cdc_metrics['gauges'][key]['value']['Server Instant Latency']
+                        print(' - Oracle CDC Server Instant Latency = {}'.format(cdc_lag_seconds))
+                        # We need to return this as a String because some values are a String like "n minutes m seconds"
+                        return { 'ORACLE_CDC_SERVER_INSTANCE_LATENCY': str(cdc_lag_seconds) }
+
             else:
-                print('Error getting Oracle CDC lag time metrics for the Job \'{}\'. Received HTTP status code: {}'
+                print('Error getting Oracle CDC metrics for the Job \'{}\'. Received HTTP status code: {}'
                       .format(job.job_name, result.status_code))
         except Exception as e:
-            print('Error getting Oracle CDC lag time metrics for the Job \'{}\': {}'
+            print('Error getting Oracle CDC metrics for the Job \'{}\': {}'
                   .format(job.job_name, str(e)))
             return None
         return None
