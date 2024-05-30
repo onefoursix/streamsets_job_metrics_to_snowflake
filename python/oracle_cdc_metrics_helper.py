@@ -57,7 +57,7 @@ class OracleCDCMetricsHelper:
                         cdc_lag_seconds = cdc_metrics['gauges'][key]['value']['Server Instant Latency']
                         print(' - Oracle CDC Server Instant Latency = {}'.format(cdc_lag_seconds))
                         # We need to return this as a String because some values are a String like "n minutes m seconds"
-                        return { 'ORACLE_CDC_SERVER_INSTANCE_LATENCY': str(cdc_lag_seconds) }
+                        return { 'ORACLE_CDC_SERVER_INSTANT_LATENCY': str(cdc_lag_seconds) }
 
             else:
                 print('Error getting Oracle CDC metrics for the Job \'{}\'. Received HTTP status code: {}'
