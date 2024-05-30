@@ -192,11 +192,11 @@ And here is a query that shows the metric captured for the new Oracle CDC origin
 
 ```
 select  name, status, starttime, inputrecords, outputrecords, 
-oracle_cdc_server_instance_latency
+oracle_cdc_server_instant_latency
 from streamsets_job_metrics 
 where status = 'ACTIVE' and name = 'Oracle CDC to Snowflake (new Connector)'
 ```
-<img src="images/new-origin-latency.png" alt="new-origin-latency.png" width="900"/>
+<img src="images/server-instant-latency.png" alt="server-instant-latency.png" width="900"/>
 
 As Oracle CDC gauges are not yet propagated to Control Hub, this capability requires the Python script to be able to connect directly to the Data Collector.
 
