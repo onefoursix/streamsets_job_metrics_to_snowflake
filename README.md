@@ -171,7 +171,7 @@ This project can also capture Oracle CDC Metrics, such as the metric <code>Read 
 
 To enable capture of either of these metrics, add a Job tag with the value <code>oracle_cdc</code> to your Oracle CDC Job(s).
 
-With that tag in place, the SDK script will capture the relevant SDC Oracle CDC gauge value, and, thanks to data-drift support in the StreamSets Snowflake Connector, will add a column named either <code>ORACLE_CDC_LAG_TIME_SECONDS</code> for the older connector or <code>ORACLE_CDC_SERVER_INSTANT_LATENCY</code> to the <code>STREAMSETS_JOB_METRICS</code> table.
+With that tag in place, the SDK script will capture the relevant SDC Oracle CDC gauge value, and, thanks to data-drift support in the StreamSets Snowflake Connector, will add a column named either <code>ORACLE_CDC_LAG_TIME_SECONDS</code> for the older connector or <code>ORACLE_CDC_SERVER_INSTANT_LATENCY</code> for the new connector to the <code>STREAMSETS_JOB_METRICS</code> table.
 
 You should see additional log messages when Oracle CDC metrics are captured, like this:
 
