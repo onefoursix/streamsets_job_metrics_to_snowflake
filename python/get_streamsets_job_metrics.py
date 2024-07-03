@@ -129,7 +129,7 @@ with (open(job_metrics_file, "w", encoding='utf-8') as output_file):
 
     # Job runs to get metrics for
     job_runs = []
-
+    
     # Loop through all Jobs
     for job in sch.jobs:
 
@@ -139,57 +139,66 @@ with (open(job_metrics_file, "w", encoding='utf-8') as output_file):
             # Get the Job History
             history = job.history
 
-            # Get the Job Metrics
-            metrics = job.metrics
-            
-            # Loop through every Job Run for the Job, starting with the most recent
-            for job_run in history:
+            try:
 
-                # If this Job Run was started or ended within the lookback period or is still ACTIVE
-                if (job_run.start_time >= start_time_millis
-                        or job_run.finish_time >= start_time_millis
-                        or job_run.status == 'ACTIVE'):
+                # Get the Job Metrics
+                metrics = job.metrics
 
-                    # Get the Job Run's metrics
-                    run = {}
-                    run['ID'] = job.job_id
-                    run['NAME'] = job.job_name
-                    run['CREATETIME'] = job.created_on
-                    run['LASTMODIFIEDON'] = job.last_modified_on
-                    run['PIPELINENAME'] = job.pipeline_name
-                    run['PIPELINECOMMITLABEL'] = job.commit_label
-                    run['RUNCOUNT'] = job_run.run_count
-                    run['STARTTIME'] = job_run.start_time
-                    run['FINISHTIME'] = job_run.finish_time
-                    run['ERRORMESSAGE'] = job_run.error_message
-                    run['COLOR'] = job_run.color
-                    run['STATUS'] = job_run.status
-                    run_metrics = get_run_metrics(job.job_name, job_run.run_count, metrics)
+                # Loop through every Job Run for the Job, starting with the most recent
+                for job_run in history:
 
-                    # If no metrics exists, set all row counts to -1 as a flag
-                    if run_metrics is not None:
-                        run['INPUTRECORDS'] = run_metrics.input_count
-                        run['OUTPUTRECORDS'] = run_metrics.output_count
-                        run['ERRORRECORDS'] = run_metrics.error_count
+                    # If this Job Run was started or ended within the lookback period or is still ACTIVE
+                    if (job_run.start_time >= start_time_millis
+                            or job_run.finish_time >= start_time_millis
+                            or job_run.status == 'ACTIVE'):
+
+                        # Get the Job Run's metrics
+                        run = {}
+                        run['ID'] = job.job_id
+                        run['NAME'] = job.job_name
+                        run['CREATETIME'] = job.created_on
+                        run['LASTMODIFIEDON'] = job.last_modified_on
+                        run['PIPELINENAME'] = job.pipeline_name
+                        run['PIPELINECOMMITLABEL'] = job.commit_label
+                        run['RUNCOUNT'] = job_run.run_count
+                        run['STARTTIME'] = job_run.start_time
+                        run['FINISHTIME'] = job_run.finish_time
+                        run['ERRORMESSAGE'] = job_run.error_message
+                        run['COLOR'] = job_run.color
+                        run['STATUS'] = job_run.status
+                        run_metrics = get_run_metrics(job.job_name, job_run.run_count, metrics)
+
+                        # If no metrics exists, set all row counts to -1 as a flag
+                        if run_metrics is not None:
+                            run['INPUTRECORDS'] = run_metrics.input_count
+                            run['OUTPUTRECORDS'] = run_metrics.output_count
+                            run['ERRORRECORDS'] = run_metrics.error_count
+                        else:
+                            run['INPUTRECORDS'] = -1
+                            run['OUTPUTRECORDS'] = -1
+                            run['ERRORRECORDS'] = -1
+
+                        # Get latency metric for Oracle CDC Jobs
+                        if job_run.status == 'ACTIVE' and is_oracle_cdc_job(job):
+                            print('Getting CDC latency metric for Oracle CDC Job \'{}\''.format(job.job_name))
+                            oracle_cdc_lag_time_metric_map = cdc_metrics.get_oracle_cdc_lag_time(job, job_run)
+
+                            # Unpack the key/value of the Oracle CDC latency metric
+                            if oracle_cdc_lag_time_metric_map is not None:
+                                for key in oracle_cdc_lag_time_metric_map.keys():
+                                    run[key] = oracle_cdc_lag_time_metric_map[key]
+
+                        job_runs.append(run)
                     else:
-                        run['INPUTRECORDS'] = -1
-                        run['OUTPUTRECORDS'] = -1
-                        run['ERRORRECORDS'] = -1
+                        # We're finished with this Job
+                        break
 
-                    # Get latency metric for Oracle CDC Jobs
-                    if job_run.status == 'ACTIVE' and is_oracle_cdc_job(job):
-                        print('Getting CDC latency metric for Oracle CDC Job \'{}\''.format(job.job_name))
-                        oracle_cdc_lag_time_metric_map = cdc_metrics.get_oracle_cdc_lag_time(job, job_run)
-
-                        # Unpack the key/value of the Oracle CDC latency metric
-                        if oracle_cdc_lag_time_metric_map is not None:
-                            for key in oracle_cdc_lag_time_metric_map.keys():
-                                run[key] = oracle_cdc_lag_time_metric_map[key]
-
-                    job_runs.append(run)
-                else:
-                    # We're finished with this Job
-                    break
+            except KeyError as ke:
+                print('-------------------------------------')
+                print('KeyError Exception getting metrics for Job \'{}\''.format(job.job_name))
+                print('Metrics collection for this Job will be skipped')
+                print('Metrics object is of type: ' + str(type(metrics)))
+                print('-------------------------------------')
 
     print('-------------------------------------')
     print('Found {} Job Runs within lookback window'.format(len(job_runs)))
