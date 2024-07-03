@@ -42,6 +42,7 @@ import sys
 from streamsets.sdk import ControlHub
 import json
 from oracle_cdc_metrics_helper import OracleCDCMetricsHelper
+import traceback
 
 # Get Control Hub Credentials from the environment
 cred_id = os.getenv('CRED_ID')
@@ -197,9 +198,11 @@ with (open(job_metrics_file, "w", encoding='utf-8') as output_file):
                 print('-------------------------------------')
                 print('KeyError Exception getting metrics for Job \'{}\''.format(job.job_name))
                 print('Metrics collection for this Job will be skipped')
-                print('Exception is: ' + str(ke))
                 print('Metrics object is of type: ' + str(type(metrics)))
+                print('Exception message is: ' + str(ke))
+                print(traceback.format_exc())
                 print('-------------------------------------')
+
 
     print('-------------------------------------')
     print('Found {} Job Runs within lookback window'.format(len(job_runs)))
