@@ -197,7 +197,7 @@ with (open(job_metrics_file, "w", encoding='utf-8') as output_file):
                 print('-------------------------------------')
                 print('KeyError Exception getting metrics for Job \'{}\''.format(job.job_name))
                 print('Metrics collection for this Job will be skipped')
-                print('Exception is: ' + str(e))
+                print('Exception is: ' + str(ke))
                 print('Metrics object is of type: ' + str(type(metrics)))
                 print('-------------------------------------')
 
