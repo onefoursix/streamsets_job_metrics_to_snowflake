@@ -141,9 +141,7 @@ with (open(job_metrics_file, "w", encoding='utf-8') as output_file):
 
             # Get the Job Metrics
             metrics = job.metrics
-
-            done = False
-
+            
             # Loop through every Job Run for the Job, starting with the most recent
             for job_run in history:
 
