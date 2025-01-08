@@ -28,6 +28,9 @@ A Job could be created for this pipeline, and that Job could be scheduled to run
 
 - StreamSets [API Credentials](https://docs.streamsets.com/portal/platform-controlhub/controlhub/UserGuide/OrganizationSecurity/APICredentials_title.html#concept_vpm_p32_qqb)
 
+- Additional configuration is needed if you want to run this project on Kubernetes. See the "Running this project on Kubernetes" section at the end of this readme for details
+
+
 ## Deploying the Example
 
 ### Deploy and Test the SDK Script
@@ -202,5 +205,129 @@ As Oracle CDC gauges are not yet propagated to Control Hub, this capability requ
 
 
 
+<HR>
+
+
+### Running this project on Kubernetes
+
+In order to run this project on Kubernetes, the following additional configuration steps are needed:
+
+ - The StreamSets engine's container must have a Python3 environment with the StreamSets SDK module installed. See below for details on how to configure that.
+ 
+ - The Python scripts must be available to the pipeline.  See below for one way to handle that, using an NFS shared directory volume-mounted into the container.
+ 
+ - The Python scripts needs access to the appropriate StreamSets API keys. We'll handle that by storing a CRED_ID and CRED_TOKEN in a secret, and volume-mounting the secret into the container.
+ 
+ - Paths to the SDK scripts and the API Creds within the pipeline will need to be adjusted accordingly.  See below for full details.
+ 
+#### Create a Custom StreamSets Image with the StreamSets SDK installed
+One can extend the default StreamSets image and add a Python environment and the StreamSets SDK module by using a Dockerfile [like this](docker/Dockerfile): 
+
+```
+FROM streamsets/datacollector:6.0.0
+RUN sudo dnf install -y python3.11
+RUN sudo dnf install -y python3-pip
+RUN sudo pip3 install streamsets
+```
+Note that StreamSets v6.0.0 and higher are based on RHEL 9.4 so the installation commands above use <code>dnf</code>, whereas older versions of StreamSets were based on Ubuntu and would need to use <code>apt-get</code> instead
+
+To run this example, build and push a custom image using that Dockerfile with your own namespace/image-name:tag, like this:
+
+```
+IMAGE_NAME=acme/sdc-sdk:1.0
+docker build -t $IMAGE_NAME .
+docker push $IMAGE_NAME
+```
+
+#### Volume-Mount the project's SDK scripts (the Python files) into the container. 
+I'll store the two Python files on a shared directory on an NFS server, at this path:
+
+```
+$ ls -l /mnt/share/resources/sdk-scripts/
+total 12
+-rw-rw-r-- 1 mark mark 8091 Jan  8 01:24 get_streamsets_job_metrics.py
+-rw-rw-r-- 1 mark mark 3360 Jan  8 01:25 oracle_cdc_metrics_helper.py
+```
+
+Add an NFS Volume to the Deployment manifest mapped to that directory on the NFS server:
+
+```
+volumes:
+  - name: sdk-scripts
+    nfs:
+      path: /mnt/share/resources/sdk-scripts
+      readOnly: true
+      server: 10.10.10.186
+```
+
+Add a VolumeMount to the Deployment manifest:
+
+```
+volumeMounts:
+  - name: sdk-scripts 
+    mountPath: /resources/sdk-scripts
+```
+
+Once the StreamSets engine is launched, the SDK scripts will be visible within their own directory within the engine's <code>resources</code> directory, so we'll be able to load them using the <code>runtime:loadResource</code> function. Once the container is deployed, you should be able to see the scripts inside the container like this:
+
+```
+$ kubectl exec -it streamsets-deployment-ab4ce983-1752-4dba-a902-de4a93da7defztlns -- bash -c 'ls -l /resources/sdk-scripts'
+total 12
+-rw-rw-r-- 1 1000 1000 8091 Jan  8 01:24 get_streamsets_job_metrics.py
+-rw-rw-r-- 1 1000 1000 3360 Jan  8 01:25 oracle_cdc_metrics_helper.py
+```
+
+
+#### Store StreamSets API Keys in a Secret and Volume-Mount them into the container
+Create a Secret to hold a StreamSets API <code>CRED_ID</code> and  <code>CRED_TOKEN</code>.  I'll store them both in the same secret, loading their values from files, like this:
+
+```
+$ kubectl create secret generic streamsets-api-creds \
+    --from-file CRED_ID.txt \
+    --from-file CRED_TOKEN.txt 
+```
+
+Add another Volume for the secret to the Volume section created in the previous step:
+
+```
+  - name: streamsets-api-creds
+    secret:
+      secretName: streamsets-api-creds
+```
+
+Add another VolumeMount for the secret to the VolumeMount section created in the previous step:
+
+```
+  - name: streamsets-api-creds
+    mountPath: /resources/streamsets-api-creds
+```
+
+Once the StreamSets engine is launched, the API keys should be visible within the container like this:
+
+```
+$ kubectl exec -it streamsets-deployment-ab4ce983-1752-4dba-a902-de4a93da7defztlns -- bash -c 'ls -l /resources/streamsets-api-creds'
+total 0
+lrwxrwxrwx 1 root root 18 Jan  8 01:42 CRED_ID.txt -> ..data/CRED_ID.txt
+lrwxrwxrwx 1 root root 21 Jan  8 01:42 CRED_TOKEN.txt -> ..data/CRED_TOKEN.txt
+```
+
+
+#### Set the path to the SDK Script in the pipeline parameters
+Here is an example of setting the path to the SDK script within the resources directory, that uses the <code>sdk-scripts</code> subdirectory mounted from the NFS share:
+
+<img src="images/k8s-params.png" alt="k8s-params.png" width="600"/>
+
+#### Set the paths to the API Credentials
+Here is an example of setting the paths to the <code>CRED_ID</code> and  <code>CRED_TOKEN</code> files volume-mounted from the secret within the pipeline's Start Event using the <code>runtime:loadResource</code> function:
+
+<img src="images/k8s-start-event.png" alt="k8s-start-event.png" width="600"/>
+
+
+
+#### Example Deployment YAML
+An example Deployment YAML is [here](yaml/deployment-example.yaml), which includes a custom image name and Volumes and VolumeMounts for the NFS share and the Secret.
+<HR/>
+
+--> Once these additional configuration steps are complete, you should be able to run this project on Kubernetes.
 
 

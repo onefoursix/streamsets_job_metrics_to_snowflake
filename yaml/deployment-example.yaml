@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: streamsets-deployment-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    vendor: streamsets-sch
+    env: na01
+  name: streamsets-deployment-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  namespace: ns1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: streamsets-deployment-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  template:
+    metadata:
+      labels:
+        app: streamsets-deployment-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        vendor: streamsets-sch
+        env: na01
+    spec:
+      containers:
+        - env:
+            - name: STREAMSETS_DEPLOYMENT_ID
+              value: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+            - name: STREAMSETS_DEPLOYMENT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: streamsets-deployment-secret-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+                  optional: false
+            - name: STREAMSETS_DEPLOYMENT_SCH_URL
+              value: https://na01.hub.streamsets.com
+          image: streamsets/datacollector:JDK17_6.0.0
+          livenessProbe:
+            failureThreshold: 20
+            httpGet:
+              path: /public-rest/ping
+              port: engine-port
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          name: streamsets-engine-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+          ports:
+            - containerPort: 18630
+              name: engine-port
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: "1"
+          startupProbe:
+            failureThreshold: 60
+            httpGet:
+              path: /public-rest/ping
+              port: engine-port
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: sdk-scripts 
+              mountPath: /resources/sdk-scripts
+            - name: streamsets-api-creds
+              mountPath: /resources/streamsets-api-creds
+      volumes:
+        - name: sdk-scripts
+          nfs:
+            path: /mnt/share/resources/sdk-scripts
+            readOnly: true
+            server: 10.10.10.186
+        - name: streamsets-api-creds
+          secret:
+            secretName: streamsets-api-creds
+      dnsPolicy: ClusterFirst
+
