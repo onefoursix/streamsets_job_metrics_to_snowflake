@@ -221,7 +221,7 @@ In order to run this project on Kubernetes, the following additional configurati
  - Paths to the SDK scripts and the API Creds within the pipeline will need to be adjusted accordingly.  See below for full details.
  
 #### Create a Custom StreamSets Image with the StreamSets SDK installed
-One can extend the default StreamSets image and add a Python environment and the StreamSets SDK module by using a Dockerfile [like this](docker/Dockerfile): 
+One can extend the default StreamSets image and add a Python environment and the StreamSets SDK module by using a Dockerfile like this: 
 
 ```
 FROM streamsets/datacollector:6.0.0
